@@ -1,4 +1,4 @@
-import { Text } from 'react-native';
+import { Pressable, Text } from 'react-native';
 
 // Lightweight icon replacement that renders Unicode/emoji glyphs in a plain
 // <Text>. Unlike @expo/vector-icons it pulls in no native font module
@@ -14,6 +14,12 @@ const GLYPHS = {
   time: '⏰',
   'time-outline': '⏰',
   trophy: '🏆',
+  'volume-high': '🔊',
+  settings: '⚙️',
+  flame: '🔥',
+  search: '🔍',
+  close: '✕',
+  star: '★',
 } as const;
 
 export type GlyphName = keyof typeof GLYPHS;
@@ -23,10 +29,12 @@ type Props = {
   size?: number;
   color?: string;
   bold?: boolean;
+  onPress?: () => void;
+  accessibilityLabel?: string;
 };
 
-export function Glyph({ name, size = 20, color, bold = true }: Props) {
-  return (
+export function Glyph({ name, size = 20, color, bold = true, onPress, accessibilityLabel }: Props) {
+  const text = (
     <Text
       allowFontScaling={false}
       style={{ fontSize: size, color, fontWeight: bold ? '700' : '400', lineHeight: size + 2 }}
@@ -34,4 +42,17 @@ export function Glyph({ name, size = 20, color, bold = true }: Props) {
       {GLYPHS[name]}
     </Text>
   );
+  if (onPress) {
+    return (
+      <Pressable
+        onPress={onPress}
+        hitSlop={10}
+        accessibilityRole="button"
+        accessibilityLabel={accessibilityLabel}
+      >
+        {text}
+      </Pressable>
+    );
+  }
+  return text;
 }

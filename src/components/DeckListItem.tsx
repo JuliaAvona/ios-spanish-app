@@ -40,6 +40,8 @@ export default function DeckListItem({ deck, progress, onPress, onLongPress }: P
       onPress={onPress}
       onLongPress={onLongPress}
       delayLongPress={250}
+      accessibilityRole="button"
+      accessibilityLabel={`${deck.title}, ${deck.cards.length} cards, ${badge.label}. Long-press to change status.`}
       style={({ pressed }) => [
         styles.tile,
         { shadowColor: deck.accent },

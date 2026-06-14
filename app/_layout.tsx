@@ -12,6 +12,7 @@ import {
 } from '@expo-google-fonts/rubik';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { SettingsProvider } from '../src/context/SettingsContext';
 import { COLORS } from '../src/theme';
 
 // Keep the native splash up until the Rubik weights are ready, so the first
@@ -36,14 +37,16 @@ export default function RootLayout() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaProvider>
-        <StatusBar style="dark" />
-        <Stack
-          screenOptions={{
-            headerShown: false,
-            contentStyle: { backgroundColor: COLORS.bg },
-            animation: 'slide_from_right',
-          }}
-        />
+        <SettingsProvider>
+          <StatusBar style="dark" />
+          <Stack
+            screenOptions={{
+              headerShown: false,
+              contentStyle: { backgroundColor: COLORS.bg },
+              animation: 'slide_from_right',
+            }}
+          />
+        </SettingsProvider>
       </SafeAreaProvider>
     </GestureHandlerRootView>
   );

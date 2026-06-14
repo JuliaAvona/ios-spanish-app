@@ -126,3 +126,13 @@ export const DECKS: Deck[] = [
 export function getDeck(id: string | undefined): Deck | undefined {
   return DECKS.find((d) => d.id === id);
 }
+
+export type DeckSection = { title: string; data: Deck[] };
+
+/** Decks grouped into Home sections. */
+export const DECK_SECTIONS: DeckSection[] = [
+  { title: 'Vocabulary', data: DECKS.filter((d) => ['colors', 'numbers', 'body', 'routine'].includes(d.id)) },
+  { title: 'Phrases', data: DECKS.filter((d) => d.id.startsWith('phrases-')) },
+  { title: 'Verbs', data: DECKS.filter((d) => d.id.startsWith('verbs-')) },
+  { title: 'Course', data: DECKS.filter((d) => d.id.startsWith('course-')) },
+].filter((s) => s.data.length > 0);

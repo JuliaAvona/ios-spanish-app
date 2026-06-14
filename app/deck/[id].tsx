@@ -8,6 +8,7 @@ import FlashCard, { Face } from '../../src/components/FlashCard';
 import { Glyph, GlyphName } from '../../src/components/Glyph';
 import { getDeck } from '../../src/data/decks';
 import { PRONOUNS } from '../../src/data/verbs';
+import { useSettings } from '../../src/context/SettingsContext';
 import {
   REVIEW_DAYS,
   getAllProgress,
@@ -15,8 +16,13 @@ import {
   snoozeDeck,
   updateDeckProgress,
 } from '../../src/storage/progress';
+import { recordReviewed } from '../../src/storage/stats';
+import { speakSpanish } from '../../src/utils/speech';
+import { cancelReviewReminder, scheduleReviewReminder } from '../../src/utils/notifications';
 import { COLORS, FONT, GRADIENTS, RADIUS, SHADOW, SPACING, glow } from '../../src/theme';
 import { Card, DeckKind } from '../../src/types';
+
+const DAY_MS = 24 * 60 * 60 * 1000;
 
 type Direction = 'en-es' | 'es-en';
 
@@ -69,9 +75,14 @@ export default function DeckTraining() {
   const deck = getDeck(id);
   const total = deck?.cards.length ?? 0;
 
+  const { settings } = useSettings();
   const [queue, setQueue] = useState<number[]>(() => shuffledIndices(total));
   const [flipped, setFlipped] = useState(false);
-  const [direction, setDirection] = useState<Direction>('en-es');
+  const [direction, setDirection] = useState<Direction>(settings.direction);
+  const dirTouched = useRef(false);
+  useEffect(() => {
+    if (!dirTouched.current) setDirection(settings.direction);
+  }, [settings.direction]);
 
   // Only downgrade a fresh deck to "learning"; leave learned/snoozed intact
   // until the user finishes and chooses an outcome.
@@ -111,20 +122,26 @@ export default function DeckTraining() {
     : faces(current, direction, deck.kind);
 
   const onFlip = () => {
-    Haptics.selectionAsync().catch(() => {});
-    setFlipped((f) => !f);
+    if (settings.haptics) Haptics.selectionAsync().catch(() => {});
+    setFlipped((f) => {
+      const next = !f;
+      if (next && settings.autoPlayAudio && current) speakSpanish(current.es);
+      return next;
+    });
   };
 
   const onKnow = () => {
-    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
+    if (settings.haptics) Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
     ensureLearning();
+    recordReviewed(1).catch(() => {});
     setFlipped(false);
     setQueue((q) => q.slice(1));
   };
 
   const onDontKnow = () => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+    if (settings.haptics) Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
     ensureLearning();
+    recordReviewed(1).catch(() => {});
     setFlipped(false);
     // Send the card to the back of the loop so it comes around again.
     setQueue((q) => (q.length <= 1 ? q : [...q.slice(1), q[0]]));
@@ -138,15 +155,18 @@ export default function DeckTraining() {
 
   const finishLearned = async () => {
     await markLearned(deck.id, total);
+    cancelReviewReminder(deck.id);
     router.back();
   };
 
   const finishSnooze = async () => {
     await snoozeDeck(deck.id, total);
+    scheduleReviewReminder(deck.id, deck.title, new Date(Date.now() + REVIEW_DAYS * DAY_MS));
     router.back();
   };
 
   const toggleDirection = () => {
+    dirTouched.current = true;
     setFlipped(false);
     setDirection((d) => (d === 'en-es' ? 'es-en' : 'en-es'));
   };
@@ -206,6 +226,16 @@ export default function DeckTraining() {
             onPress={onFlip}
           />
 
+          <Pressable
+            onPress={() => current && speakSpanish(current.es)}
+            style={({ pressed }) => [styles.speakBtn, pressed && styles.speakBtnPressed]}
+            accessibilityRole="button"
+            accessibilityLabel="Play Spanish pronunciation"
+          >
+            <Glyph name="volume-high" size={17} />
+            <Text style={styles.speakText}>Hear it</Text>
+          </Pressable>
+
           <View style={styles.actions}>
             <RateButton
               label="Keep looping"
@@ -249,6 +279,9 @@ function RateButton({
     <Pressable
       onPress={onPress}
       disabled={disabled}
+      accessibilityRole="button"
+      accessibilityLabel={label}
+      accessibilityState={{ disabled }}
       style={({ pressed }) => [
         styles.rateBtn,
         isSuccess ? styles.rateSuccess : styles.rateNeutral,
@@ -401,8 +434,26 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: SPACING.xl,
     justifyContent: 'center',
-    gap: SPACING.xl,
+    gap: SPACING.lg,
     paddingBottom: SPACING.xl,
+  },
+  speakBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    alignSelf: 'center',
+    gap: 6,
+    paddingHorizontal: SPACING.lg,
+    paddingVertical: SPACING.sm,
+    backgroundColor: COLORS.primarySoft,
+    borderRadius: RADIUS.pill,
+  },
+  speakBtnPressed: {
+    opacity: 0.7,
+  },
+  speakText: {
+    fontSize: 14,
+    fontFamily: FONT.bold,
+    color: COLORS.primary,
   },
   actions: {
     flexDirection: 'row',

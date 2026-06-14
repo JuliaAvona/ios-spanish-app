@@ -60,6 +60,15 @@ export async function resetDeck(deckId: string): Promise<ProgressMap> {
   return map;
 }
 
+/** Wipe progress for every deck. */
+export async function clearAllProgress(): Promise<void> {
+  try {
+    await AsyncStorage.removeItem(KEY);
+  } catch {
+    // best effort
+  }
+}
+
 /** A snoozed deck whose review date has passed is "due" again. */
 export function isDue(p: DeckProgress | undefined, now: number = Date.now()): boolean {
   return !!p && p.status === 'snoozed' && p.reviewAfter !== undefined && p.reviewAfter <= now;
