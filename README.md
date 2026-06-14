@@ -8,11 +8,23 @@ EN → ES флешкарточный тренажёр для iOS (React Native +
 
 ## Наборы в MVP
 
+**Лексика** (EN → ES, карточка-переворот, можно менять направление):
+
 | Тема | Карточек |
 |------|----------|
 | 🎨 Colors (Los colores) — со свотчами цветов | 14 |
 | 🔢 Numbers 0–100 (Los números) | 101 |
 | 🧍 Body parts (El cuerpo) — с артиклями el/la | 22 |
+| 🌅 Daily routine (Mi rutina diaria) — дни недели, глаголы, связки, фразы | 43 |
+
+**Глаголы** (Presente, перёд — инфинитив + перевод + паттерн, оборот — таблица спряжения
+yo/tú/él/nosotros/ellos). Данные перенесены из `spanish_verbs_quiz`:
+
+| Тема | Глаголов |
+|------|----------|
+| 🔄 Verbs · Stem-changing (e→ie, o→ue, e→i) | 19 |
+| ⚡ Verbs · Irregular (yo -go/-zco, ser/ir/estar…) | 15 |
+| ✏️ Verbs · Regular | 9 |
 
 ## Запуск
 

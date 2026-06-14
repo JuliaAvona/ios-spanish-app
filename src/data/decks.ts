@@ -1,5 +1,6 @@
 import { Card, Deck } from '../types';
 import { VERB_DECKS } from './verbs';
+import { ROUTINE_DECK } from './routine';
 
 // --- Numbers 0–100 ------------------------------------------------------
 // Built programmatically: the 0–29 forms are irregular, 30–99 follow the
@@ -114,6 +115,7 @@ export const DECKS: Deck[] = [
     kind: 'vocab',
     cards: bodyCards,
   },
+  ROUTINE_DECK,
   ...VERB_DECKS,
 ];
 
