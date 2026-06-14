@@ -6,6 +6,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import FlashCard, { Face } from '../../src/components/FlashCard';
 import { Glyph, GlyphName } from '../../src/components/Glyph';
 import { getDeck } from '../../src/data/decks';
+import { PRONOUNS } from '../../src/data/verbs';
 import {
   REVIEW_DAYS,
   getAllProgress,
@@ -14,7 +15,7 @@ import {
   updateDeckProgress,
 } from '../../src/storage/progress';
 import { COLORS, RADIUS, SPACING } from '../../src/theme';
-import { Card } from '../../src/types';
+import { Card, DeckKind } from '../../src/types';
 
 type Direction = 'en-es' | 'es-en';
 
@@ -27,10 +28,38 @@ function shuffledIndices(n: number): number[] {
   return a;
 }
 
-function faces(card: Card, dir: Direction): { front: Face; back: Face } {
-  const en: Face = { text: card.en, tag: 'English', color: card.color };
-  const es: Face = { text: card.es, tag: 'Español', color: card.color };
-  return dir === 'en-es' ? { front: en, back: es } : { front: es, back: en };
+const DUMMY_FACE: Face = { kind: 'word', tag: '', text: '' };
+
+function faces(card: Card, dir: Direction, kind: DeckKind): { front: Face; back: Face } {
+  if (kind === 'verbs') {
+    return {
+      front: {
+        kind: 'verb',
+        tag: 'Infinitive',
+        infinitive: card.es,
+        meaning: card.meaning ?? '',
+        pattern: card.pattern ?? '',
+      },
+      back: {
+        kind: 'forms',
+        tag: 'Presente',
+        infinitive: card.es,
+        forms: PRONOUNS.map((pron, i) => ({ pron, form: card.forms?.[i] ?? '' })),
+      },
+    };
+  }
+  const word = (text: string, tag: string, answer: boolean): Face => ({
+    kind: 'word',
+    text,
+    tag,
+    color: card.color,
+    answer,
+  });
+  const enFirst = dir === 'en-es';
+  return {
+    front: enFirst ? word(card.en, 'English', false) : word(card.es, 'Español', false),
+    back: enFirst ? word(card.es, 'Español', true) : word(card.en, 'English', true),
+  };
 }
 
 export default function DeckTraining() {
@@ -77,8 +106,8 @@ export default function DeckTraining() {
   const done = remaining === 0;
   const current = deck.cards[queue[0]];
   const { front, back } = done
-    ? { front: {} as Face, back: {} as Face }
-    : faces(current, direction);
+    ? { front: DUMMY_FACE, back: DUMMY_FACE }
+    : faces(current, direction, deck.kind);
 
   const onFlip = () => {
     Haptics.selectionAsync().catch(() => {});
@@ -133,9 +162,13 @@ export default function DeckTraining() {
             {deck.emoji} {deck.title}
           </Text>
         </View>
-        <Pressable onPress={toggleDirection} hitSlop={12} style={styles.dirBtn}>
-          <Text style={styles.dirText}>{direction === 'en-es' ? 'EN→ES' : 'ES→EN'}</Text>
-        </Pressable>
+        {deck.kind === 'verbs' ? (
+          <View style={styles.headerBtn} />
+        ) : (
+          <Pressable onPress={toggleDirection} hitSlop={12} style={styles.dirBtn}>
+            <Text style={styles.dirText}>{direction === 'en-es' ? 'EN→ES' : 'ES→EN'}</Text>
+          </Pressable>
+        )}
       </View>
 
       {/* Progress */}

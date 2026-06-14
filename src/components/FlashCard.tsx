@@ -2,13 +2,13 @@ import React, { useEffect, useRef } from 'react';
 import { Animated, Pressable, StyleSheet, Text, View } from 'react-native';
 import { COLORS, RADIUS, SPACING, isLightColor } from '../theme';
 
-export type Face = {
-  text: string;
-  /** Small label above the word, e.g. the language ("English" / "Español"). */
-  tag: string;
-  /** Hex swatch (color decks only). */
-  color?: string;
-};
+export type Face =
+  // Vocab word (with optional color swatch).
+  | { kind: 'word'; tag: string; text: string; color?: string; answer?: boolean }
+  // Verb prompt: infinitive + meaning + pattern label.
+  | { kind: 'verb'; tag: string; infinitive: string; meaning: string; pattern: string }
+  // Verb answer: full present-tense conjugation table.
+  | { kind: 'forms'; tag: string; infinitive: string; forms: { pron: string; form: string }[] };
 
 type Props = {
   front: Face;
@@ -17,7 +17,7 @@ type Props = {
   onPress: () => void;
 };
 
-/** A tappable card that flips between an English prompt and its Spanish answer. */
+/** A tappable card that flips between a prompt and its answer. */
 export default function FlashCard({ front, back, flipped, onPress }: Props) {
   const anim = useRef(new Animated.Value(0)).current;
 
@@ -48,17 +48,55 @@ export default function FlashCard({ front, back, flipped, onPress }: Props) {
             { transform: [{ perspective: 1000 }, { rotateY: backRotate }] },
           ]}
         >
-          <CardFace face={back} hint="Tap to flip back" answer />
+          <CardFace face={back} hint="Tap to flip back" />
         </Animated.View>
       </View>
     </Pressable>
   );
 }
 
-function CardFace({ face, hint, answer }: { face: Face; hint: string; answer?: boolean }) {
+function CardFace({ face, hint }: { face: Face; hint: string }) {
   return (
     <>
       <Text style={styles.tag}>{face.tag}</Text>
+      <FaceBody face={face} />
+      <Text style={styles.hint}>{hint}</Text>
+    </>
+  );
+}
+
+function FaceBody({ face }: { face: Face }) {
+  if (face.kind === 'verb') {
+    return (
+      <View style={styles.center}>
+        <Text style={styles.verbInfinitive}>{face.infinitive}</Text>
+        <Text style={styles.verbMeaning}>{face.meaning}</Text>
+        <View style={styles.patternPill}>
+          <Text style={styles.patternText}>{face.pattern}</Text>
+        </View>
+      </View>
+    );
+  }
+
+  if (face.kind === 'forms') {
+    return (
+      <View style={styles.center}>
+        <Text style={styles.formsInfinitive}>{face.infinitive}</Text>
+        <View style={styles.formsTable}>
+          {face.forms.map((f) => (
+            <View key={f.pron} style={styles.formRow}>
+              <Text style={styles.formPron}>{f.pron}</Text>
+              <Text style={styles.formVal}>{f.form}</Text>
+            </View>
+          ))}
+        </View>
+      </View>
+    );
+  }
+
+  // word
+  return (
+    <View style={styles.center}>
       {face.color ? (
         <View
           style={[
@@ -68,15 +106,18 @@ function CardFace({ face, hint, answer }: { face: Face; hint: string; answer?: b
           ]}
         />
       ) : null}
-      <Text style={[styles.word, answer && styles.wordAnswer]} numberOfLines={3} adjustsFontSizeToFit>
+      <Text
+        style={[styles.word, face.answer && styles.wordAnswer]}
+        numberOfLines={3}
+        adjustsFontSizeToFit
+      >
         {face.text}
       </Text>
-      <Text style={styles.hint}>{hint}</Text>
-    </>
+    </View>
   );
 }
 
-const CARD_HEIGHT = 320;
+const CARD_HEIGHT = 340;
 
 const styles = StyleSheet.create({
   pressable: {
@@ -102,6 +143,11 @@ const styles = StyleSheet.create({
   faceBack: {
     ...StyleSheet.absoluteFillObject,
     backgroundColor: '#FFFDF8',
+  },
+  center: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '100%',
   },
   tag: {
     position: 'absolute',
@@ -129,6 +175,58 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   wordAnswer: {
+    color: COLORS.primaryDark,
+  },
+  // Verb front
+  verbInfinitive: {
+    fontSize: 42,
+    fontWeight: '800',
+    color: COLORS.ink,
+    textAlign: 'center',
+  },
+  verbMeaning: {
+    fontSize: 17,
+    color: COLORS.inkSoft,
+    marginTop: SPACING.xs,
+  },
+  patternPill: {
+    marginTop: SPACING.lg,
+    backgroundColor: COLORS.warnSoft,
+    paddingHorizontal: SPACING.md,
+    paddingVertical: 5,
+    borderRadius: 999,
+  },
+  patternText: {
+    fontSize: 13,
+    fontWeight: '700',
+    color: COLORS.primaryDark,
+  },
+  // Verb back (conjugation table)
+  formsInfinitive: {
+    fontSize: 22,
+    fontWeight: '800',
+    color: COLORS.ink,
+    marginBottom: SPACING.md,
+  },
+  formsTable: {
+    width: '78%',
+    gap: 2,
+  },
+  formRow: {
+    flexDirection: 'row',
+    alignItems: 'baseline',
+    justifyContent: 'space-between',
+    paddingVertical: 7,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: COLORS.border,
+  },
+  formPron: {
+    fontSize: 15,
+    color: COLORS.inkSoft,
+  },
+  formVal: {
+    fontSize: 19,
+    fontWeight: '700',
     color: COLORS.primaryDark,
   },
   hint: {

@@ -1,4 +1,5 @@
 import { Card, Deck } from '../types';
+import { VERB_DECKS } from './verbs';
 
 // --- Numbers 0–100 ------------------------------------------------------
 // Built programmatically: the 0–29 forms are irregular, 30–99 follow the
@@ -92,6 +93,7 @@ export const DECKS: Deck[] = [
     titleEs: 'Los colores',
     emoji: '🎨',
     accent: '#E07A5F',
+    kind: 'vocab',
     cards: colorCards,
   },
   {
@@ -100,6 +102,7 @@ export const DECKS: Deck[] = [
     titleEs: 'Los números',
     emoji: '🔢',
     accent: '#3D7EA6',
+    kind: 'vocab',
     cards: numberCards(),
   },
   {
@@ -108,8 +111,10 @@ export const DECKS: Deck[] = [
     titleEs: 'El cuerpo',
     emoji: '🧍',
     accent: '#7B61A8',
+    kind: 'vocab',
     cards: bodyCards,
   },
+  ...VERB_DECKS,
 ];
 
 export function getDeck(id: string | undefined): Deck | undefined {
