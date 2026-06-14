@@ -46,13 +46,19 @@ npx expo export --platform ios          # собрать JS-бандл (вали
 
 ```
 app/
-  _layout.tsx        Stack-навигация (expo-router)
-  index.tsx          Главная — список тем со статусами
-  deck/[id].tsx      Экран тренировки + экран завершения
+  _layout.tsx          Корневой Stack + SettingsProvider
+  (tabs)/_layout.tsx   Нижние табы (Path / Sets / Profile) + гейт онбординга
+  (tabs)/index.tsx     Path — карта-путь обучения (таймлайн по главам)
+  (tabs)/sets.tsx      Sets — все наборы, поиск, секции, смена статуса
+  (tabs)/profile.tsx   Profile — прогресс (стрик/статы) + настройки
+  deck/[id].tsx        Экран тренировки + завершение (поверх табов)
+  onboarding.tsx       Первый запуск (3 слайда)
 src/
-  data/decks.ts      Наборы карточек + генератор чисел 0–100
-  storage/progress.ts AsyncStorage: статусы наборов (new/learning/learned/snoozed)
-  components/         FlashCard (переворот), DeckListItem
+  context/SettingsContext.tsx   Настройки (направление, звук, хаптик, onboarded)
+  data/decks.ts                 Наборы + секции + генератор чисел
+  storage/progress.ts, stats.ts AsyncStorage: статусы наборов, стрик/статистика
+  utils/speech.ts, notifications.ts  Озвучка (TTS), напоминания о повторе
+  components/                    FlashCard, DeckListItem, StatusPicker, Glyph
   theme.ts, types.ts
 ```
 

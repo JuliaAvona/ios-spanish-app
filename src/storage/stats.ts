@@ -3,6 +3,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 export type Stats = {
   /** Consecutive days with at least one review. */
   streak: number;
+  /** Longest streak ever reached. */
+  bestStreak: number;
   /** Local day string of the last review (YYYY-M-D). */
   lastDay: string;
   /** Cards reviewed on `lastDay`. */
@@ -12,7 +14,7 @@ export type Stats = {
 };
 
 const KEY = 'spanish-cards:stats:v1';
-const EMPTY: Stats = { streak: 0, lastDay: '', todayCount: 0, total: 0 };
+const EMPTY: Stats = { streak: 0, bestStreak: 0, lastDay: '', todayCount: 0, total: 0 };
 
 function dayStr(d: Date): string {
   return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`;
@@ -48,7 +50,8 @@ export async function recordReviewed(n = 1): Promise<Stats> {
     lastDay = t;
   }
   total += n;
-  const next: Stats = { streak, lastDay, todayCount, total };
+  const bestStreak = Math.max(s.bestStreak, streak);
+  const next: Stats = { streak, bestStreak, lastDay, todayCount, total };
   try {
     await AsyncStorage.setItem(KEY, JSON.stringify(next));
   } catch {

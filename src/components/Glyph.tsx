@@ -20,6 +20,11 @@ const GLYPHS = {
   search: '🔍',
   close: '✕',
   star: '★',
+  play: '▶',
+  lock: '🔒',
+  map: '🗺️',
+  cards: '🃏',
+  person: '👤',
 } as const;
 
 export type GlyphName = keyof typeof GLYPHS;
