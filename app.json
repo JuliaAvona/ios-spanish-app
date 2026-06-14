@@ -7,16 +7,23 @@
     "scheme": "spanishcards",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
+    "icon": "./assets/icon.png",
     "splash": {
+      "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
-      "backgroundColor": "#FBF7F0"
+      "backgroundColor": "#15253C"
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.spanishcards.app"
+      "bundleIdentifier": "com.spanishcards.app",
+      "icon": "./assets/icon.png"
     },
     "android": {
-      "package": "com.spanishcards.app"
+      "package": "com.spanishcards.app",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#15253C"
+      }
     },
     "plugins": [
       "expo-router",

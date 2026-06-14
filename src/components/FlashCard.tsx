@@ -33,9 +33,17 @@ export default function FlashCard({ front, back, flipped, onPress }: Props) {
   const frontRotate = anim.interpolate({ inputRange: [0, 1], outputRange: ['0deg', '180deg'] });
   const backRotate = anim.interpolate({ inputRange: [0, 1], outputRange: ['180deg', '360deg'] });
 
+  // Fades/scales in on mount. Since the parent remounts this component per card
+  // (via key), this also gives each new card a gentle entrance.
+  const mount = useRef(new Animated.Value(0)).current;
+  useEffect(() => {
+    Animated.timing(mount, { toValue: 1, duration: 170, useNativeDriver: true }).start();
+  }, [mount]);
+  const mountScale = mount.interpolate({ inputRange: [0, 1], outputRange: [0.97, 1] });
+
   return (
     <Pressable onPress={onPress} style={styles.pressable}>
-      <View>
+      <Animated.View style={{ opacity: mount, transform: [{ scale: mountScale }] }}>
         <Animated.View
           style={[styles.face, { transform: [{ perspective: 1000 }, { rotateY: frontRotate }] }]}
         >
@@ -50,7 +58,7 @@ export default function FlashCard({ front, back, flipped, onPress }: Props) {
         >
           <CardFace face={back} hint="Tap to flip back" />
         </Animated.View>
-      </View>
+      </Animated.View>
     </Pressable>
   );
 }

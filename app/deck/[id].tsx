@@ -197,7 +197,13 @@ export default function DeckTraining() {
         />
       ) : (
         <View style={styles.cardArea}>
-          <FlashCard front={front} back={back} flipped={flipped} onPress={onFlip} />
+          <FlashCard
+            key={queue[0]}
+            front={front}
+            back={back}
+            flipped={flipped}
+            onPress={onFlip}
+          />
 
           <View style={styles.actions}>
             <RateButton
