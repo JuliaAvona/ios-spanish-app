@@ -1,4 +1,5 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import { Glyph, GlyphName } from './Glyph';
 import { COLORS, FONT, RADIUS, SHADOW, SPACING } from '../theme';
 import { Deck, DeckProgress } from '../types';
@@ -8,13 +9,14 @@ type Props = {
   deck: Deck;
   progress?: DeckProgress;
   onPress: () => void;
+  onLongPress: () => void;
 };
 
 type Badge = { label: string; fg: string; bg: string; icon?: GlyphName };
 
 function badgeFor(progress?: DeckProgress): Badge {
   if (!progress || progress.status === 'new') {
-    return { label: 'New', fg: COLORS.inkSoft, bg: COLORS.border };
+    return { label: 'New', fg: COLORS.primary, bg: COLORS.primarySoft };
   }
   if (progress.status === 'learned') {
     return { label: 'Learned', fg: COLORS.success, bg: COLORS.successSoft, icon: 'checkmark-circle' };
@@ -30,15 +32,27 @@ function badgeFor(progress?: DeckProgress): Badge {
 }
 
 /** A square-ish deck tile sized for a two-column grid. */
-export default function DeckListItem({ deck, progress, onPress }: Props) {
+export default function DeckListItem({ deck, progress, onPress, onLongPress }: Props) {
   const badge = badgeFor(progress);
 
   return (
     <Pressable
       onPress={onPress}
-      style={({ pressed }) => [styles.tile, pressed && styles.tilePressed]}
+      onLongPress={onLongPress}
+      delayLongPress={250}
+      style={({ pressed }) => [
+        styles.tile,
+        { shadowColor: deck.accent },
+        pressed && styles.tilePressed,
+      ]}
     >
-      <View style={[styles.emojiWrap, { backgroundColor: deck.accent + '1A' }]}>
+      <View style={styles.emojiWrap}>
+        <LinearGradient
+          colors={[deck.accent + '33', deck.accent + '12'] as const}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={StyleSheet.absoluteFillObject}
+        />
         <Text style={styles.emoji}>{deck.emoji}</Text>
       </View>
 
@@ -63,27 +77,30 @@ export default function DeckListItem({ deck, progress, onPress }: Props) {
 const styles = StyleSheet.create({
   tile: {
     width: '48%',
-    minHeight: 188,
+    minHeight: 190,
     marginBottom: SPACING.lg,
     backgroundColor: COLORS.card,
     borderRadius: RADIUS.lg,
     padding: SPACING.lg,
+    // Soft accent-tinted halo (shadowColor is set per-tile from the deck accent).
     ...SHADOW.md,
+    shadowOpacity: 0.22,
   },
   tilePressed: {
-    opacity: 0.92,
-    transform: [{ scale: 0.98 }],
+    opacity: 0.95,
+    transform: [{ scale: 0.97 }],
   },
   emojiWrap: {
-    width: 54,
-    height: 54,
+    width: 56,
+    height: 56,
     borderRadius: RADIUS.md,
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: SPACING.md,
+    overflow: 'hidden',
   },
   emoji: {
-    fontSize: 27,
+    fontSize: 28,
   },
   title: {
     fontSize: 17,
@@ -109,8 +126,8 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start',
     gap: 4,
     paddingHorizontal: SPACING.sm,
-    paddingVertical: 3,
-    borderRadius: 999,
+    paddingVertical: 4,
+    borderRadius: RADIUS.pill,
     marginTop: 'auto',
   },
   badgeText: {

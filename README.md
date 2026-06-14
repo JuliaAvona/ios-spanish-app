@@ -16,6 +16,7 @@ EN → ES флешкарточный тренажёр для iOS (React Native +
 | 🔢 Numbers 0–100 (Los números) | 101 |
 | 🧍 Body parts (El cuerpo) — с артиклями el/la | 22 |
 | 🌅 Daily routine (Mi rutina diaria) — дни недели, глаголы, связки, фразы | 43 |
+| 💬 Everyday phrases · 1–4 (Frases) — бытовые фразы, по 20 в наборе | 80 |
 
 **Глаголы** (Presente, перёд — инфинитив + перевод + паттерн, оборот — таблица спряжения
 yo/tú/él/nosotros/ellos). Данные перенесены из `spanish_verbs_quiz`:

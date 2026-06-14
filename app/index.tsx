@@ -1,18 +1,27 @@
 import { useCallback, useState } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import * as Haptics from 'expo-haptics';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import DeckListItem from '../src/components/DeckListItem';
+import StatusPicker from '../src/components/StatusPicker';
 import { DECKS } from '../src/data/decks';
-import { getAllProgress } from '../src/storage/progress';
+import {
+  getAllProgress,
+  markLearned,
+  resetDeck,
+  snoozeDeck,
+  updateDeckProgress,
+} from '../src/storage/progress';
 import { COLORS, FONT, GRADIENTS, RADIUS, SPACING } from '../src/theme';
-import { ProgressMap } from '../src/types';
+import { Deck, DeckStatus, ProgressMap } from '../src/types';
 
 export default function Home() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const [progress, setProgress] = useState<ProgressMap>({});
+  const [editingDeck, setEditingDeck] = useState<Deck | null>(null);
 
   // Reload whenever the screen regains focus so status badges reflect the
   // result of the training session the user just finished.
@@ -25,6 +34,33 @@ export default function Home() {
       };
     }, []),
   );
+
+  const openStatusPicker = (deck: Deck) => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {});
+    setEditingDeck(deck);
+  };
+
+  const applyStatus = async (status: DeckStatus) => {
+    const deck = editingDeck;
+    if (!deck) return;
+    Haptics.selectionAsync().catch(() => {});
+    const total = deck.cards.length;
+    if (status === 'new') {
+      await resetDeck(deck.id);
+    } else if (status === 'learning') {
+      await updateDeckProgress(deck.id, {
+        status: 'learning',
+        lastTrainedAt: Date.now(),
+        reviewAfter: undefined,
+      });
+    } else if (status === 'learned') {
+      await markLearned(deck.id, total);
+    } else if (status === 'snoozed') {
+      await snoozeDeck(deck.id, total);
+    }
+    setEditingDeck(null);
+    setProgress(await getAllProgress());
+  };
 
   const learnedCount = DECKS.filter((d) => progress[d.id]?.status === 'learned').length;
 
@@ -47,6 +83,7 @@ export default function Home() {
         </LinearGradient>
 
         <View style={[styles.body, { paddingBottom: insets.bottom + SPACING.xxl }]}>
+          <Text style={styles.hint}>Tip — long-press a set to change its status</Text>
           <View style={styles.list}>
             {DECKS.map((deck) => (
               <DeckListItem
@@ -54,11 +91,19 @@ export default function Home() {
                 deck={deck}
                 progress={progress[deck.id]}
                 onPress={() => router.push(`/deck/${deck.id}`)}
+                onLongPress={() => openStatusPicker(deck)}
               />
             ))}
           </View>
         </View>
       </ScrollView>
+
+      <StatusPicker
+        deck={editingDeck}
+        currentStatus={editingDeck ? progress[editingDeck.id]?.status : undefined}
+        onClose={() => setEditingDeck(null)}
+        onSelect={applyStatus}
+      />
     </View>
   );
 }
@@ -103,6 +148,12 @@ const styles = StyleSheet.create({
     borderTopRightRadius: RADIUS.xl,
     paddingHorizontal: SPACING.xl,
     paddingTop: SPACING.xl,
+  },
+  hint: {
+    fontSize: 12.5,
+    fontFamily: FONT.regular,
+    color: COLORS.inkFaint,
+    marginBottom: SPACING.md,
   },
   list: {
     flexDirection: 'row',
