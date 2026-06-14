@@ -2,6 +2,7 @@ import { Card, Deck } from '../types';
 import { VERB_DECKS } from './verbs';
 import { ROUTINE_DECK } from './routine';
 import { PHRASE_DECKS } from './phrases';
+import { COURSE_DECKS } from './course';
 
 // --- Numbers 0–100 ------------------------------------------------------
 // Built programmatically: the 0–29 forms are irregular, 30–99 follow the
@@ -119,6 +120,7 @@ export const DECKS: Deck[] = [
   ROUTINE_DECK,
   ...PHRASE_DECKS,
   ...VERB_DECKS,
+  ...COURSE_DECKS,
 ];
 
 export function getDeck(id: string | undefined): Deck | undefined {

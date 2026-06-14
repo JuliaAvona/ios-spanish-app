@@ -8,7 +8,11 @@
       "Bash(sips -g pixelWidth -g pixelHeight screencapture-skyeng-ru-2026-06-13-23_16_22.png)",
       "Bash(python3 -c ' *)",
       "Bash(python3 -c \"import json,sys;print\\('expo-linear-gradient', json.load\\(sys.stdin\\)['version']\\)\")",
-      "Bash(xargs -n1 basename)"
+      "Bash(xargs -n1 basename)",
+      "Bash(sips -g pixelWidth -g pixelHeight -g hasAlpha ios/SpanishCards/Images.xcassets/AppIcon.appiconset/App-Icon-1024x1024@1x.png)",
+      "Bash(pdftotext -enc UTF-8 \"/Users/juliaavona/Documents/Julia/IOS/spanish-app/D_Petrov_16_urokov_ispanskogo_yazyka.pdf\" petrov.txt)",
+      "Bash(grep -nE '^УРОК [0-9]+$' petrov.txt)",
+      "Bash(git mv *)"
     ]
   }
 }
