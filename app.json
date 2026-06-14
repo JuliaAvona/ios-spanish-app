@@ -1,0 +1,26 @@
+{
+  "expo": {
+    "name": "Spanish Cards",
+    "slug": "spanish-cards",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "scheme": "spanishcards",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "splash": {
+      "resizeMode": "contain",
+      "backgroundColor": "#FBF7F0"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.spanishcards.app"
+    },
+    "android": {
+      "package": "com.spanishcards.app"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-font"
+    ]
+  }
+}
