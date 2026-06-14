@@ -66,7 +66,7 @@ export const ROUTINE_DECK: Deck = {
   title: 'Daily routine',
   titleEs: 'Mi rutina diaria',
   emoji: '🌅',
-  accent: '#2A9D8F',
+  accent: '#16B79A',
   kind: 'vocab',
   cards: routineCards,
 };

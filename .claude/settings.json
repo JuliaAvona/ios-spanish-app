@@ -4,7 +4,11 @@
       "Bash(npx expo *)",
       "Bash(python3 -c \"import json,sys; d=json.load\\(sys.stdin\\); print\\('=DEPS='\\); [print\\(f'{k}: {v}'\\) for k,v in d['dependencies'].items\\(\\) if k in ['expo','expo-router','expo-status-bar','expo-haptics','expo-linear-gradient','expo-constants','expo-splash-screen','expo-system-ui','expo-font','react','react-dom','react-native','react-native-safe-area-context','react-native-screens','react-native-gesture-handler','react-native-reanimated','@expo/vector-icons','@react-native-async-storage/async-storage']]; print\\('=DEV='\\); [print\\(f'{k}: {v}'\\) for k,v in d.get\\('devDependencies',{}\\).items\\(\\)]\")",
       "Bash(node -e ' *)",
-      "Bash(sips -g pixelWidth -g pixelHeight -g hasAlpha -g format icon.png)"
+      "Bash(sips -g pixelWidth -g pixelHeight -g hasAlpha -g format icon.png)",
+      "Bash(sips -g pixelWidth -g pixelHeight screencapture-skyeng-ru-2026-06-13-23_16_22.png)",
+      "Bash(python3 -c ' *)",
+      "Bash(python3 -c \"import json,sys;print\\('expo-linear-gradient', json.load\\(sys.stdin\\)['version']\\)\")",
+      "Bash(xargs -n1 basename)"
     ]
   }
 }

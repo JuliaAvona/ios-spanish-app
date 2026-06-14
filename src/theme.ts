@@ -1,23 +1,46 @@
-// Shared visual language for the app — a warm, Spanish-flavored palette.
+// Visual language — Skyeng-inspired: cool light canvas, white shadowed cards,
+// a vivid indigo primary, deep-navy type, fresh green for "correct".
 
 export const COLORS = {
-  bg: '#FBF7F0',
+  bg: '#F4F2FB',
   card: '#FFFFFF',
-  ink: '#2B2520',
-  inkSoft: '#7A6F63',
-  inkFaint: '#B6ABA0',
-  border: '#ECE3D8',
+  ink: '#16163A',
+  inkSoft: '#6E7191',
+  inkFaint: '#A9ADC9',
+  border: '#EAE7F6',
 
-  primary: '#E07A5F',
-  primaryDark: '#C45D43',
+  primary: '#5046E5',
+  primaryDark: '#372FBF',
+  primarySoft: '#ECEAFD',
 
-  success: '#2E9E6B',
-  successSoft: '#E4F4EC',
+  // Skyeng's near-black "active chip" navy.
+  navy: '#16163A',
 
-  warn: '#E0A23F',
-  warnSoft: '#FBF0DC',
+  success: '#22C06B',
+  successSoft: '#E1F7EC',
 
-  shadow: '#2B2520',
+  warn: '#FF9F2E',
+  warnSoft: '#FFF3E1',
+
+  shadow: '#332A6B',
+} as const;
+
+// Rubik — a friendly geometric sans close to Skyeng's brand type.
+// Google Fonts registers each weight as its own family, so fontWeight has no
+// effect; set fontFamily explicitly via these tokens.
+export const FONT = {
+  regular: 'Rubik_400Regular',
+  medium: 'Rubik_500Medium',
+  semibold: 'Rubik_600SemiBold',
+  bold: 'Rubik_700Bold',
+  extrabold: 'Rubik_800ExtraBold',
+} as const;
+
+// Skyeng-style gradients (used via expo-linear-gradient).
+export const GRADIENTS = {
+  hero: ['#6E7CFF', '#A57BFF'] as const, // blue → lilac (home header)
+  brand: ['#7A5CFF', '#E15BD0'] as const, // violet → magenta (signature accent)
+  success: ['#2BD17E', '#16A862'] as const, // fresh green (positive actions)
 } as const;
 
 export const SPACING = {
@@ -30,11 +53,41 @@ export const SPACING = {
 } as const;
 
 export const RADIUS = {
-  sm: 10,
+  sm: 12,
   md: 16,
   lg: 22,
   xl: 28,
+  pill: 999,
 } as const;
+
+// Soft, slightly-blue elevation used across cards and buttons.
+export const SHADOW = {
+  sm: {
+    shadowColor: COLORS.shadow,
+    shadowOpacity: 0.07,
+    shadowRadius: 12,
+    shadowOffset: { width: 0, height: 5 },
+    elevation: 3,
+  },
+  md: {
+    shadowColor: COLORS.shadow,
+    shadowOpacity: 0.1,
+    shadowRadius: 22,
+    shadowOffset: { width: 0, height: 10 },
+    elevation: 6,
+  },
+} as const;
+
+/** A colored "glow" shadow for primary/positive buttons. */
+export function glow(color: string) {
+  return {
+    shadowColor: color,
+    shadowOpacity: 0.35,
+    shadowRadius: 16,
+    shadowOffset: { width: 0, height: 8 },
+    elevation: 6,
+  } as const;
+}
 
 /** Cards whose swatch is very light need a dark check/border to stay visible. */
 export function isLightColor(hex: string): boolean {

@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { Animated, Pressable, StyleSheet, Text, View } from 'react-native';
-import { COLORS, RADIUS, SPACING, isLightColor } from '../theme';
+import { COLORS, FONT, RADIUS, SHADOW, SPACING, isLightColor } from '../theme';
 
 export type Face =
   // Vocab word (with optional color swatch).
@@ -142,11 +142,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingHorizontal: SPACING.xl,
     backfaceVisibility: 'hidden',
-    shadowColor: COLORS.shadow,
-    shadowOpacity: 0.1,
-    shadowRadius: 24,
-    shadowOffset: { width: 0, height: 12 },
-    elevation: 6,
+    ...SHADOW.md,
   },
   faceBack: {
     ...StyleSheet.absoluteFillObject,
@@ -161,10 +157,10 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: SPACING.xl,
     fontSize: 13,
-    fontWeight: '600',
+    fontFamily: FONT.bold,
     letterSpacing: 1.5,
     textTransform: 'uppercase',
-    color: COLORS.inkFaint,
+    color: COLORS.primary,
   },
   swatch: {
     width: 92,
@@ -178,7 +174,7 @@ const styles = StyleSheet.create({
   },
   word: {
     fontSize: 44,
-    fontWeight: '800',
+    fontFamily: FONT.extrabold,
     color: COLORS.ink,
     textAlign: 'center',
   },
@@ -188,12 +184,13 @@ const styles = StyleSheet.create({
   // Verb front
   verbInfinitive: {
     fontSize: 42,
-    fontWeight: '800',
+    fontFamily: FONT.extrabold,
     color: COLORS.ink,
     textAlign: 'center',
   },
   verbMeaning: {
     fontSize: 17,
+    fontFamily: FONT.regular,
     color: COLORS.inkSoft,
     marginTop: SPACING.xs,
   },
@@ -206,13 +203,13 @@ const styles = StyleSheet.create({
   },
   patternText: {
     fontSize: 13,
-    fontWeight: '700',
+    fontFamily: FONT.bold,
     color: COLORS.primaryDark,
   },
   // Verb back (conjugation table)
   formsInfinitive: {
     fontSize: 22,
-    fontWeight: '800',
+    fontFamily: FONT.extrabold,
     color: COLORS.ink,
     marginBottom: SPACING.md,
   },
@@ -230,17 +227,19 @@ const styles = StyleSheet.create({
   },
   formPron: {
     fontSize: 15,
+    fontFamily: FONT.regular,
     color: COLORS.inkSoft,
   },
   formVal: {
     fontSize: 19,
-    fontWeight: '700',
+    fontFamily: FONT.bold,
     color: COLORS.primaryDark,
   },
   hint: {
     position: 'absolute',
     bottom: SPACING.xl,
     fontSize: 13,
+    fontFamily: FONT.regular,
     color: COLORS.inkFaint,
   },
 });

@@ -1,6 +1,6 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { Glyph, GlyphName } from './Glyph';
-import { COLORS, RADIUS, SPACING } from '../theme';
+import { COLORS, FONT, RADIUS, SHADOW, SPACING } from '../theme';
 import { Deck, DeckProgress } from '../types';
 import { daysUntilReview, isDue } from '../storage/progress';
 
@@ -63,42 +63,43 @@ export default function DeckListItem({ deck, progress, onPress }: Props) {
 const styles = StyleSheet.create({
   tile: {
     width: '48%',
-    minHeight: 184,
-    marginBottom: SPACING.md,
+    minHeight: 188,
+    marginBottom: SPACING.lg,
     backgroundColor: COLORS.card,
     borderRadius: RADIUS.lg,
-    borderWidth: 1,
-    borderColor: COLORS.border,
     padding: SPACING.lg,
+    ...SHADOW.md,
   },
   tilePressed: {
-    opacity: 0.7,
+    opacity: 0.92,
     transform: [{ scale: 0.98 }],
   },
   emojiWrap: {
-    width: 52,
-    height: 52,
+    width: 54,
+    height: 54,
     borderRadius: RADIUS.md,
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: SPACING.md,
   },
   emoji: {
-    fontSize: 26,
+    fontSize: 27,
   },
   title: {
     fontSize: 17,
-    fontWeight: '700',
+    fontFamily: FONT.bold,
     color: COLORS.ink,
     lineHeight: 21,
   },
   subtitle: {
     fontSize: 13,
+    fontFamily: FONT.medium,
     color: COLORS.inkSoft,
     marginTop: 3,
   },
   meta: {
     fontSize: 12,
+    fontFamily: FONT.regular,
     color: COLORS.inkFaint,
     marginTop: 2,
   },
@@ -114,6 +115,6 @@ const styles = StyleSheet.create({
   },
   badgeText: {
     fontSize: 11.5,
-    fontWeight: '700',
+    fontFamily: FONT.bold,
   },
 });

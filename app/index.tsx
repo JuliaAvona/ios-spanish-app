@@ -1,15 +1,17 @@
 import { useCallback, useState } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import { useFocusEffect, useRouter } from 'expo-router';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import DeckListItem from '../src/components/DeckListItem';
 import { DECKS } from '../src/data/decks';
 import { getAllProgress } from '../src/storage/progress';
-import { COLORS, SPACING } from '../src/theme';
+import { COLORS, FONT, GRADIENTS, RADIUS, SPACING } from '../src/theme';
 import { ProgressMap } from '../src/types';
 
 export default function Home() {
   const router = useRouter();
+  const insets = useSafeAreaInsets();
   const [progress, setProgress] = useState<ProgressMap>({});
 
   // Reload whenever the screen regains focus so status badges reflect the
@@ -27,28 +29,37 @@ export default function Home() {
   const learnedCount = DECKS.filter((d) => progress[d.id]?.status === 'learned').length;
 
   return (
-    <SafeAreaView style={styles.safe} edges={['top', 'left', 'right']}>
-      <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-        <Text style={styles.kicker}>EN → ES</Text>
-        <Text style={styles.heading}>Spanish Cards</Text>
-        <Text style={styles.sub}>
-          {learnedCount > 0
-            ? `${learnedCount} of ${DECKS.length} sets learned · pick a topic to train`
-            : 'Pick a topic and loop the cards until they stick'}
-        </Text>
+    <View style={styles.safe}>
+      <ScrollView showsVerticalScrollIndicator={false}>
+        <LinearGradient
+          colors={GRADIENTS.hero}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={[styles.hero, { paddingTop: insets.top + SPACING.lg }]}
+        >
+          <Text style={styles.heroPill}>EN → ES</Text>
+          <Text style={styles.heroTitle}>Spanish Cards ✨</Text>
+          <Text style={styles.heroSub}>
+            {learnedCount > 0
+              ? `${learnedCount} of ${DECKS.length} sets learned · pick a topic to train`
+              : 'Pick a topic and loop the cards until they stick'}
+          </Text>
+        </LinearGradient>
 
-        <View style={styles.list}>
-          {DECKS.map((deck) => (
-            <DeckListItem
-              key={deck.id}
-              deck={deck}
-              progress={progress[deck.id]}
-              onPress={() => router.push(`/deck/${deck.id}`)}
-            />
-          ))}
+        <View style={[styles.body, { paddingBottom: insets.bottom + SPACING.xxl }]}>
+          <View style={styles.list}>
+            {DECKS.map((deck) => (
+              <DeckListItem
+                key={deck.id}
+                deck={deck}
+                progress={progress[deck.id]}
+                onPress={() => router.push(`/deck/${deck.id}`)}
+              />
+            ))}
+          </View>
         </View>
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 }
 
@@ -57,27 +68,41 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: COLORS.bg,
   },
-  content: {
-    padding: SPACING.xl,
-    paddingBottom: SPACING.xxl,
+  hero: {
+    paddingHorizontal: SPACING.xl,
+    paddingBottom: SPACING.xxl + SPACING.lg,
   },
-  kicker: {
-    fontSize: 13,
-    fontWeight: '700',
-    letterSpacing: 2,
-    color: COLORS.primary,
-    marginBottom: SPACING.xs,
+  heroPill: {
+    alignSelf: 'flex-start',
+    fontSize: 12,
+    fontFamily: FONT.extrabold,
+    letterSpacing: 1.5,
+    color: '#fff',
+    backgroundColor: 'rgba(255,255,255,0.22)',
+    paddingHorizontal: SPACING.md,
+    paddingVertical: 5,
+    borderRadius: RADIUS.pill,
+    overflow: 'hidden',
+    marginBottom: SPACING.md,
   },
-  heading: {
+  heroTitle: {
     fontSize: 34,
-    fontWeight: '800',
-    color: COLORS.ink,
+    fontFamily: FONT.extrabold,
+    color: '#fff',
   },
-  sub: {
+  heroSub: {
     fontSize: 15,
-    color: COLORS.inkSoft,
+    fontFamily: FONT.regular,
+    color: 'rgba(255,255,255,0.92)',
     marginTop: SPACING.xs,
-    marginBottom: SPACING.xl,
+  },
+  body: {
+    marginTop: -SPACING.xl,
+    backgroundColor: COLORS.bg,
+    borderTopLeftRadius: RADIUS.xl,
+    borderTopRightRadius: RADIUS.xl,
+    paddingHorizontal: SPACING.xl,
+    paddingTop: SPACING.xl,
   },
   list: {
     flexDirection: 'row',

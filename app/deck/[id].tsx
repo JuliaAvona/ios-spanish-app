@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import * as Haptics from 'expo-haptics';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -14,7 +15,7 @@ import {
   snoozeDeck,
   updateDeckProgress,
 } from '../../src/storage/progress';
-import { COLORS, RADIUS, SPACING } from '../../src/theme';
+import { COLORS, FONT, GRADIENTS, RADIUS, SHADOW, SPACING, glow } from '../../src/theme';
 import { Card, DeckKind } from '../../src/types';
 
 type Direction = 'en-es' | 'es-en';
@@ -174,11 +175,11 @@ export default function DeckTraining() {
       {/* Progress */}
       <View style={styles.progressBlock}>
         <View style={styles.progressTrack}>
-          <View
-            style={[
-              styles.progressFill,
-              { width: `${total ? (mastered / total) * 100 : 0}%`, backgroundColor: deck.accent },
-            ]}
+          <LinearGradient
+            colors={GRADIENTS.brand}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 0 }}
+            style={[styles.progressFill, { width: `${total ? (mastered / total) * 100 : 0}%` }]}
           />
         </View>
         <Text style={styles.progressLabel}>
@@ -255,6 +256,14 @@ function RateButton({
         disabled && styles.rateDisabled,
       ]}
     >
+      {isSuccess && (
+        <LinearGradient
+          colors={GRADIENTS.success}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={[StyleSheet.absoluteFillObject, { borderRadius: RADIUS.lg }]}
+        />
+      )}
       <Glyph name={icon} size={20} color={isSuccess ? '#fff' : COLORS.ink} />
       <Text style={[styles.rateText, isSuccess && styles.rateTextSuccess]}>{label}</Text>
     </Pressable>
@@ -278,14 +287,26 @@ function CompletionView({
 }) {
   return (
     <View style={styles.completion}>
-      <View style={[styles.completionBadge, { backgroundColor: accent + '1A' }]}>
-        <Glyph name="trophy" size={40} color={accent} />
+      <View style={styles.completionBadge}>
+        <LinearGradient
+          colors={GRADIENTS.brand}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={StyleSheet.absoluteFillObject}
+        />
+        <Glyph name="trophy" size={40} color="#fff" />
       </View>
       <Text style={styles.completionTitle}>¡Bien hecho!</Text>
       <Text style={styles.completionSub}>You looped all {total} cards. What next?</Text>
 
       <View style={styles.completionActions}>
         <Pressable onPress={onLearned} style={[styles.primaryBtn, { backgroundColor: COLORS.success }]}>
+          <LinearGradient
+            colors={GRADIENTS.success}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={[StyleSheet.absoluteFillObject, { borderRadius: RADIUS.lg }]}
+          />
           <Glyph name="checkmark-circle" size={20} color="#fff" />
           <Text style={styles.primaryBtnText}>Mark as learned</Text>
         </Pressable>
@@ -317,6 +338,7 @@ const styles = StyleSheet.create({
   },
   notFound: {
     fontSize: 16,
+    fontFamily: FONT.regular,
     color: COLORS.ink,
     textAlign: 'center',
     marginTop: SPACING.xxl,
@@ -339,19 +361,19 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     fontSize: 17,
-    fontWeight: '700',
+    fontFamily: FONT.bold,
     color: COLORS.ink,
   },
   dirBtn: {
     paddingHorizontal: SPACING.md,
-    paddingVertical: 6,
-    borderRadius: 999,
-    backgroundColor: COLORS.border,
+    paddingVertical: 7,
+    borderRadius: RADIUS.pill,
+    backgroundColor: COLORS.navy,
   },
   dirText: {
     fontSize: 12.5,
-    fontWeight: '800',
-    color: COLORS.inkSoft,
+    fontFamily: FONT.extrabold,
+    color: '#fff',
     letterSpacing: 0.5,
   },
   progressBlock: {
@@ -373,7 +395,7 @@ const styles = StyleSheet.create({
   progressLabel: {
     fontSize: 13,
     color: COLORS.inkSoft,
-    fontWeight: '600',
+    fontFamily: FONT.semibold,
   },
   cardArea: {
     flex: 1,
@@ -393,15 +415,17 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     gap: SPACING.sm,
     height: 58,
-    borderRadius: RADIUS.md,
+    borderRadius: RADIUS.lg,
   },
   rateSuccess: {
     backgroundColor: COLORS.success,
+    ...glow(COLORS.success),
   },
   rateNeutral: {
     backgroundColor: COLORS.card,
     borderWidth: 1.5,
     borderColor: COLORS.border,
+    ...SHADOW.sm,
   },
   ratePressed: {
     opacity: 0.85,
@@ -412,7 +436,7 @@ const styles = StyleSheet.create({
   },
   rateText: {
     fontSize: 16,
-    fontWeight: '700',
+    fontFamily: FONT.bold,
     color: COLORS.ink,
   },
   rateTextSuccess: {
@@ -421,6 +445,7 @@ const styles = StyleSheet.create({
   actionHint: {
     textAlign: 'center',
     fontSize: 13,
+    fontFamily: FONT.regular,
     color: COLORS.inkFaint,
     marginTop: -SPACING.sm,
   },
@@ -438,14 +463,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: SPACING.sm,
+    overflow: 'hidden',
   },
   completionTitle: {
     fontSize: 28,
-    fontWeight: '800',
+    fontFamily: FONT.extrabold,
     color: COLORS.ink,
   },
   completionSub: {
     fontSize: 15,
+    fontFamily: FONT.regular,
     color: COLORS.inkSoft,
     textAlign: 'center',
     marginBottom: SPACING.lg,
@@ -460,11 +487,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     gap: SPACING.sm,
     height: 56,
-    borderRadius: RADIUS.md,
+    borderRadius: RADIUS.lg,
+    ...glow(COLORS.success),
   },
   primaryBtnText: {
     fontSize: 16,
-    fontWeight: '700',
+    fontFamily: FONT.bold,
     color: '#fff',
   },
   outlineBtn: {
@@ -473,14 +501,14 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     gap: SPACING.sm,
     height: 56,
-    borderRadius: RADIUS.md,
+    borderRadius: RADIUS.lg,
     borderWidth: 1.5,
     borderColor: COLORS.warn,
     backgroundColor: COLORS.warnSoft,
   },
   outlineBtnText: {
     fontSize: 16,
-    fontWeight: '700',
+    fontFamily: FONT.bold,
   },
   ghostBtn: {
     flexDirection: 'row',
@@ -491,7 +519,7 @@ const styles = StyleSheet.create({
   },
   ghostBtnText: {
     fontSize: 15,
-    fontWeight: '600',
+    fontFamily: FONT.semibold,
     color: COLORS.inkSoft,
   },
   linkBtn: {
@@ -501,6 +529,6 @@ const styles = StyleSheet.create({
   linkText: {
     fontSize: 15,
     color: COLORS.primary,
-    fontWeight: '600',
+    fontFamily: FONT.semibold,
   },
 });
