@@ -80,6 +80,8 @@ const styles = StyleSheet.create({
     marginBottom: SPACING.xl,
   },
   list: {
-    gap: SPACING.md,
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
   },
 });

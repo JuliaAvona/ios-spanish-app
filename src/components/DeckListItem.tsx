@@ -29,71 +29,78 @@ function badgeFor(progress?: DeckProgress): Badge {
   return { label: 'In progress', fg: COLORS.warn, bg: COLORS.warnSoft, icon: 'ellipse' };
 }
 
+/** A square-ish deck tile sized for a two-column grid. */
 export default function DeckListItem({ deck, progress, onPress }: Props) {
   const badge = badgeFor(progress);
 
   return (
     <Pressable
       onPress={onPress}
-      style={({ pressed }) => [styles.row, pressed && styles.rowPressed]}
+      style={({ pressed }) => [styles.tile, pressed && styles.tilePressed]}
     >
       <View style={[styles.emojiWrap, { backgroundColor: deck.accent + '1A' }]}>
         <Text style={styles.emoji}>{deck.emoji}</Text>
       </View>
 
-      <View style={styles.middle}>
-        <Text style={styles.title}>{deck.title}</Text>
-        <Text style={styles.subtitle}>
-          {deck.titleEs} · {deck.cards.length} cards
-        </Text>
-        <View style={[styles.badge, { backgroundColor: badge.bg }]}>
-          {badge.icon ? <Glyph name={badge.icon} size={13} color={badge.fg} /> : null}
-          <Text style={[styles.badgeText, { color: badge.fg }]}>{badge.label}</Text>
-        </View>
-      </View>
+      <Text style={styles.title} numberOfLines={2}>
+        {deck.title}
+      </Text>
+      <Text style={styles.subtitle} numberOfLines={1}>
+        {deck.titleEs}
+      </Text>
+      <Text style={styles.meta}>{deck.cards.length} cards</Text>
 
-      <Glyph name="chevron-forward" size={22} color={COLORS.inkFaint} />
+      <View style={[styles.badge, { backgroundColor: badge.bg }]}>
+        {badge.icon ? <Glyph name={badge.icon} size={12} color={badge.fg} /> : null}
+        <Text style={[styles.badgeText, { color: badge.fg }]} numberOfLines={1}>
+          {badge.label}
+        </Text>
+      </View>
     </Pressable>
   );
 }
 
 const styles = StyleSheet.create({
-  row: {
-    flexDirection: 'row',
-    alignItems: 'center',
+  tile: {
+    width: '48%',
+    minHeight: 184,
+    marginBottom: SPACING.md,
     backgroundColor: COLORS.card,
     borderRadius: RADIUS.lg,
     borderWidth: 1,
     borderColor: COLORS.border,
     padding: SPACING.lg,
-    gap: SPACING.lg,
   },
-  rowPressed: {
+  tilePressed: {
     opacity: 0.7,
-    transform: [{ scale: 0.99 }],
+    transform: [{ scale: 0.98 }],
   },
   emojiWrap: {
-    width: 56,
-    height: 56,
+    width: 52,
+    height: 52,
     borderRadius: RADIUS.md,
     alignItems: 'center',
     justifyContent: 'center',
+    marginBottom: SPACING.md,
   },
   emoji: {
-    fontSize: 28,
-  },
-  middle: {
-    flex: 1,
-    gap: 3,
+    fontSize: 26,
   },
   title: {
-    fontSize: 18,
+    fontSize: 17,
     fontWeight: '700',
     color: COLORS.ink,
+    lineHeight: 21,
   },
   subtitle: {
-    fontSize: 13.5,
+    fontSize: 13,
     color: COLORS.inkSoft,
+    marginTop: 3,
+  },
+  meta: {
+    fontSize: 12,
+    color: COLORS.inkFaint,
+    marginTop: 2,
   },
   badge: {
     flexDirection: 'row',
@@ -103,10 +110,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: SPACING.sm,
     paddingVertical: 3,
     borderRadius: 999,
-    marginTop: SPACING.xs,
+    marginTop: 'auto',
   },
   badgeText: {
-    fontSize: 12,
+    fontSize: 11.5,
     fontWeight: '700',
   },
 });
