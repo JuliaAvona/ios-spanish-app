@@ -7,9 +7,9 @@ import { COLORS, FONT, GRADIENTS, RADIUS, SPACING, glow } from '../src/theme';
 
 const STEPS = [
   {
-    emoji: '📚',
-    title: 'Learn Spanish,\none card at a time',
-    text: '27 sets — vocabulary, everyday phrases, verbs and a 16-lesson beginner course.',
+    emoji: '🦜',
+    title: 'Meet Loro',
+    text: 'Learn Spanish one card at a time — vocabulary, phrases, verbs and a 16-lesson course.',
   },
   {
     emoji: '🔁',

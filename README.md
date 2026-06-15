@@ -1,4 +1,4 @@
-# Spanish Cards 🇪🇸
+# Loro — Spanish Flashcards 🦜
 
 EN → ES флешкарточный тренажёр для iOS (React Native + Expo SDK 54, expo-router).
 

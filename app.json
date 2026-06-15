@@ -1,7 +1,8 @@
 {
   "expo": {
-    "name": "Spanish Cards",
+    "name": "Loro",
     "slug": "spanish-cards",
+    "owner": "izbrodin90",
     "version": "1.0.0",
     "orientation": "portrait",
     "scheme": "spanishcards",
@@ -16,7 +17,11 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.spanishcards.app",
-      "icon": "./assets/icon.png"
+      "icon": "./assets/icon.png",
+      "buildNumber": "1",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
       "package": "com.spanishcards.app",
@@ -29,6 +34,12 @@
       "expo-router",
       "expo-font",
       "expo-notifications"
-    ]
+    ],
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "274440f6-12c8-4b4b-bab2-43b56f8fb952"
+      }
+    }
   }
 }
